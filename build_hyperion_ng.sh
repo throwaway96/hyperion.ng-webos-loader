@@ -6,12 +6,12 @@ HYPERION_NG_REPO="${HYPERION_NG_REPO:-https://github.com/hyperion-project/hyperi
 HYPERION_NG_BRANCH="${HYPERION_NG_BRANCH:-master}"
 
 # Toolchain params - No changes needed below this line
-TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-$HOME/arm-webos-linux-gnueabi_sdk-buildroot}
+TOOLCHAIN_DIR="${TOOLCHAIN_DIR:-${HOME}/arm-webos-linux-gnueabi_sdk-buildroot}"
 TOOLCHAIN_ENV_FILE="${TOOLCHAIN_DIR}/environment-setup"
 TOOLCHAIN_CMAKE_FILE="${TOOLCHAIN_DIR}/share/buildroot/toolchainfile.cmake"
 
-EXEC_FILE=`readlink -f $0`
-EXEC_DIR=`dirname ${EXEC_FILE}`
+EXEC_FILE="$(readlink -f -- "$0")"
+EXEC_DIR="$(dirname -- "${EXEC_FILE}")"
 # Dir to copy hyperion.ng build artifacts to
 TARGET_DIR="${EXEC_DIR}/hyperion"
 
@@ -21,20 +21,20 @@ BUILD_DIR_CROSS="${HYPERION_NG_DIR}/build-cross"
 
 DEPENDENCIES="libpng16.so.16 libjpeg.so.8 libcrypto.so.1.1 libz.so.1 libssl.so.1.1 libpcre2-16.so.0 libQt5Gui.so.5 libQt5Network.so.5 libQt5Widgets.so.5 libk5crypto.so.3 libatomic.so.1 libQt5Core.so.5 libkrb5support.so.0 libcom_err.so.3 libstdc++.so.6 libkrb5.so.3 libQt5Sql.so.5 libgssapi_krb5.so.2 libQt5SerialPort.so.5 libusb-1.0.so.0 libudev.so.1"
 
-if [ ! -d $HYPERION_NG_DIR ]
+if [ ! -d "${HYPERION_NG_DIR}" ]
 then
-  echo ":: Cloning hyperion.ng from repo '$HYPERION_NG_REPO', branch: '$HYPERION_NG_BRANCH'"
-  git clone --recursive --branch $HYPERION_NG_BRANCH $HYPERION_NG_REPO $HYPERION_NG_DIR || { echo "[-] Cloning git repo failed"; exit 1; }
+  echo ":: Cloning hyperion.ng from repo '${HYPERION_NG_REPO}', branch: '${HYPERION_NG_BRANCH}'"
+  git clone --recursive --branch "${HYPERION_NG_BRANCH}" "${HYPERION_NG_REPO}" "${HYPERION_NG_DIR}" || { echo "[-] Cloning git repo failed"; exit 1; }
 fi
 
 # Native build to have flatc compiler
-if [ ! -d ${BUILD_DIR_NATIVE} ]
+if [ ! -d "${BUILD_DIR_NATIVE}" ]
 then
-  mkdir ${BUILD_DIR_NATIVE}
+  mkdir -- "${BUILD_DIR_NATIVE}"
 fi
 
-pushd ${BUILD_DIR_NATIVE}
-cmake  .. \
+pushd -- "${BUILD_DIR_NATIVE}"
+cmake .. \
   -DCMAKE_BUILD_TYPE=Release \
   -DENABLE_FLATBUF_SERVER=OFF \
   -DENABLE_DISPMANX=OFF \
@@ -64,14 +64,14 @@ popd
 # Target cross build
 # source $WEBOS_ENV_FILE
 
-if [ ! -d ${BUILD_DIR_CROSS} ]
+if [ ! -d "${BUILD_DIR_CROSS}" ]
 then
-  mkdir ${BUILD_DIR_CROSS}
+  mkdir -- "${BUILD_DIR_CROSS}"
 fi
 
-pushd ${BUILD_DIR_CROSS}
+pushd -- "${BUILD_DIR_CROSS}"
 cmake .. \
-  -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_CMAKE_FILE} \
+  -DCMAKE_TOOLCHAIN_FILE="${TOOLCHAIN_CMAKE_FILE}" \
   -DCMAKE_BUILD_TYPE=Debug \
   -DPLATFORM=rpi \
   -DHYPERION_LIGHT=ON \
@@ -89,33 +89,33 @@ cmake .. \
   -DENABLE_PROTOBUF_SERVER=OFF \
   -DENABLE_FORWARDER=ON \
   -DENABLE_FLATBUF_CONNECT=ON \
-  -DIMPORT_FLATC=${BUILD_DIR_NATIVE}/flatc_export.cmake || { echo "[-] Cross build -CONFIG- failed"; exit 1; }
+  -DIMPORT_FLATC="${BUILD_DIR_NATIVE}/flatc_export.cmake" || { echo "[-] Cross build -CONFIG- failed"; exit 1; }
 
 make -j9 || { echo "[-] Native build -MAKE- failed"; exit 1; }
 popd
 
-if [ -d $TARGET_DIR ]
+if [ -d "${TARGET_DIR}" ]
 then
   echo ":: Empyting target build artifacts dir"
-  rm -rf $TARGET_DIR/*
+  rm -rf -- "${TARGET_DIR}"/*
 else
   echo ":: Creating build artifacts dir"
-  mkdir $TARGET_DIR
+  mkdir -- "${TARGET_DIR}"
 fi
 
 echo ":: Copying build artifacts"
-cp -ra ${BUILD_DIR_CROSS}/bin/* ${TARGET_DIR}/
+cp -ra -- "${BUILD_DIR_CROSS}/bin/"* "${TARGET_DIR}/"
 
 echo ":: Copying dependencies from toolchain sysroot"
 for fname in ${DEPENDENCIES}
 do
-  find ${TOOLCHAIN_DIR}/arm-webos-linux-gnueabi/sysroot/ -name $fname -exec cp {} ${TARGET_DIR}/ \;
+  find -- "${TOOLCHAIN_DIR}/arm-webos-linux-gnueabi/sysroot/" -name "${fname}" -exec cp -t "${TARGET_DIR}" -- {} \;
 done
 
-mkdir -p ${TARGET_DIR}/sqldrivers
-mkdir -p ${TARGET_DIR}/imageformats
-cp ${TOOLCHAIN_DIR}/arm-webos-linux-gnueabi/sysroot/usr/lib/qt/plugins/sqldrivers/libqsqlite.so ${TARGET_DIR}/sqldrivers/
-cp ${TOOLCHAIN_DIR}/arm-webos-linux-gnueabi/sysroot/usr/lib/qt/plugins/imageformats/libqico.so ${TARGET_DIR}/imageformats/
-cp ${TOOLCHAIN_DIR}/arm-webos-linux-gnueabi/sysroot/usr/lib/qt/plugins/imageformats/libqjpeg.so ${TARGET_DIR}/imageformats/
+mkdir -p -- "${TARGET_DIR}/sqldrivers"
+mkdir -p -- "${TARGET_DIR}/imageformats"
+cp -- "${TOOLCHAIN_DIR}/arm-webos-linux-gnueabi/sysroot/usr/lib/qt/plugins/sqldrivers/libqsqlite.so" "${TARGET_DIR}/sqldrivers/"
+cp -- "${TOOLCHAIN_DIR}/arm-webos-linux-gnueabi/sysroot/usr/lib/qt/plugins/imageformats/libqico.so" "${TARGET_DIR}/imageformats/"
+cp -- "${TOOLCHAIN_DIR}/arm-webos-linux-gnueabi/sysroot/usr/lib/qt/plugins/imageformats/libqjpeg.so" "${TARGET_DIR}/imageformats/"
 
 echo "[+] Success"
