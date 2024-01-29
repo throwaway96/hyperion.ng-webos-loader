@@ -7,7 +7,7 @@
   "scripts": {
     "build": "enyo pack",
     "build-service": "mkdir -p ./dist/service && rm -rf ./dist/service/* && mkdir -p ./service/build && cd service/build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make && cd ../.. && cp -r ./service/build/dist/* ./dist/service/",
-    "package": "ares-package dist/ -e enyo-ilib",
+    "package": "ares-package dist/",
     "deploy": "ares-install org.webosbrew.hyperion.ng.loader_${npm_package_version}_all.ipk",
     "launch": "ares-launch org.webosbrew.hyperion.ng.loader",
     "clean": "rm -rf dist/ service/build/",
@@ -15,7 +15,7 @@
     "build-local": "npm-run-all --serial build-local:**",
     "build-local:frontend": "enyo pack",
     "build-local:service": "mkdir -p ./service/build && cd service/build && cmake .. && make && cd ../..",
-    "build-local:package": "ares-package dist/ -e enyo-ilib",
+    "build-local:package": "ares-package dist/",
     "build-and-launch": "npm-run-all --serial build-local deploy launch",
     "gen-manifest": "webosbrew-gen-manifest -a appinfo.json -p org.webosbrew.hyperion.ng.loader_${npm_package_version}_all.ipk -o org.webosbrew.hyperion.ng.loader.manifest.json --icon https://github.com/webosbrew/hyperion.ng-webos-loader/raw/master/assets/logo_big.png --link https://github.com/webosbrew/hyperion.ng-webos-loader --root true",
     "version": "node tools/sync-version.js && git add appinfo.json"

@@ -8,7 +8,6 @@
     "spotlight",
     "layout",
     "svg",
-    "enyo-ilib",
     "enyo-webos"
   ],
   "sources": {
@@ -17,7 +16,6 @@
     "spotlight": "https://github.com/enyojs/spotlight.git",
     "layout": "https://github.com/enyojs/layout.git",
     "svg": "https://github.com/enyojs/svg.git",
-    "enyo-ilib": "https://github.com/enyojs/enyo-ilib.git",
     "enyo-webos": "https://github.com/enyojs/enyo-webos.git"
   },
   "targets": {
@@ -26,7 +24,6 @@
     "spotlight": "2.7.0",
     "layout": "2.7.0",
     "svg": "2.7.0",
-    "enyo-ilib": "2.7.0",
     "enyo-webos": "2.7.0"
   },
   "production": false,
