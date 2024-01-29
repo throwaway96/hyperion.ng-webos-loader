@@ -20,7 +20,5 @@
         "hyperion.ng/**",
         "service/**",
         "tools/**"
-    ],
-    "parserOptions": {
-    }
+    ]
 }
