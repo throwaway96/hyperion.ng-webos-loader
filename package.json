@@ -27,12 +27,8 @@
   "author": "",
   "license": "UNLICENSED",
   "devDependencies": {
-    "@babel/core": "^7.23.9",
-    "@babel/plugin-transform-object-assign": "^7.23.3",
-    "@babel/preset-env": "^7.23.9",
     "@webosbrew/pub-utils": "^1.1.0",
     "@webosose/ares-cli": "^2.4.0",
-    "babel-loader": "^9.1.3",
     "enyo-dev": "^1.0.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
@@ -41,8 +37,7 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^3.2.4",
     "webpack": "^5.90.0",
-    "webpack-cli": "^5.1.4",
-    "webpack-shebang-plugin": "^1.1.8"
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
   }
