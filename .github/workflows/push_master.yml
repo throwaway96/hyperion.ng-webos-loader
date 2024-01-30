@@ -1,0 +1,28 @@
+name: Create Development Build from HEAD
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build
+    uses: ./.github/workflows/build.yml
+
+  release:
+    name: Create Development Build
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Upload Development Build assets
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: latest
+          prerelease: true
+          name: Development Build
+          artifacts: '*.ipk,org.webosbrew.hyperion.ng.loader.manifest.json'
+          artifactErrorsFailBuild: true
+          allowUpdates: true
+          replacesArtifacts: true
+          generateReleaseNotes: true
